@@ -1,4 +1,5 @@
 const axios = require('axios');
+const apiResponse  = require("../Helpers/apiResponse");
 
 const getRequestedPackages = async (req, res) => {
 
@@ -9,7 +10,7 @@ const getRequestedPackages = async (req, res) => {
     var homepage;
     var version;
 
-    console.log(Packagename);
+    //console.log(Packagename);
     try {
 
         let data = await axios.get("http://registry.npmjs.org/" + Packagename + "/latest");
@@ -21,10 +22,7 @@ const getRequestedPackages = async (req, res) => {
             homepage = data?.data?.homepage;
             version = data?.data?.version;
         }
-        else {
-            res.status(404).json({ data: "Package not fount" });
-        }
-        var packagedetails = {
+        var packageDetails = {
             packageName: Packagename,
             url: url,
             homepage: homepage,
@@ -32,9 +30,9 @@ const getRequestedPackages = async (req, res) => {
             dependencies: dependencies,
             devDependencies: devDependencies,
         }
-        res.status(200).json({ data: packagedetails });
+        apiResponse.Success(res,`${Packagename} Package Found`,{ data:packageDetails });
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        apiResponse.NotFound(res,"Package Not Found",{ err: "Error" });
     }
 }
 
